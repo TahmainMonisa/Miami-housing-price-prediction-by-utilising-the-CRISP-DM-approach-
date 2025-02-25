@@ -1,1 +1,2 @@
 # Miami-housing-price-prediction-by-utilising-the-CRISP-DM-approach-
+### Applied well-grounded data science management approaches like CRISP-DM, the most used data science management approach. Performed practical use of Exploratory Data Analysis (EDA), which includes Data cleaning and preprocessing, Univariate analysis, Bivariate analysis, Multivariate analysis, Outlier detection, and Handling outliers and missing values. Used statistical interpretation of results and telling a story with data. 
