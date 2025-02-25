@@ -1,0 +1,123 @@
+---
+title: "Portfolio 3"
+author: "Tahmain Akther Monisa"
+date: "2024-04-26"
+output: html_document
+---
+
+**Load the dataset**
+
+```{r}
+data <- read.csv("C:/miami-housing.csv")
+head(data)
+str(data)
+summary(data)
+data$LATITUDE<-NULL
+data$LONGITUDE<-NULL
+data$avno60plus<-NULL
+head(data)
+```
+**splitting the data into training (70%) and testing (30%) sets**
+```{r}
+sample_size <- floor(0.7*nrow(data))
+train_index <- sample(seq_len(nrow(data)), size = sample_size)
+train <- data[train_index, ]
+test <- data[-train_index, ]
+
+View(train)
+View(test)
+```
+
+**Fitting the model on the training data**
+
+```{r}
+lm_model <- lm(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data=train)
+summary(lm_model)
+```
+
+**Making prediction on the testing set **
+
+```{r}
+lm_predictions <- predict(lm_model, newdata = test)
+chooseCRANmirror(ind=1) # This opens a window where you can select a CRAN mirror
+install.packages("caret")
+library(caret)
+lm_performance<- postResample(pred = lm_predictions, obs = test$SALE_PRC)
+print(lm_performance)
+```
+
+**Implementing Decision Tree model **
+
+```{r}
+install.packages("e1071")
+library(e1071)
+library(rpart)
+dt_model <- svm(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data=train)
+dt_prediction <- predict(dt_model, newdata = test)
+dt_performance <- postResample(pred = dt_prediction, obs = test$SALE_PRC)
+print(dt_performance)
+
+```
+
+**Implementing a SVR Model (Poly Kernel) **
+```{r}
+svr_linear <- svm(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data = train, kernel="poly")
+svr_linear_prediction <- predict(svr_linear, newdata=test)
+svr_performance <- postResample(pred = svr_linear_prediction, obs = test$SALE_PRC)
+print(svr_performance)
+```
+**Implementing a SVR Model(Radial kernel)**
+```{r}
+svr_linear <- svm(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data = train, kernel="radial")
+svr_linear_prediction <- predict(svr_linear, newdata=test)
+svr_performance <- postResample(pred = svr_linear_prediction, obs = test$SALE_PRC)
+print(svr_performance)
+```
+
+**Implementing a SVR Model (Linear Kernel) **
+```{r}
+svr_linear <- svm(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data = train, kernel="linear")
+svr_linear_prediction <- predict(svr_linear, newdata=test)
+svr_performance <- postResample(pred = svr_linear_prediction, obs = test$SALE_PRC)
+print(svr_performance)
+```
+**Implementing Random Forest Model (n100)**
+
+```{r}
+install.packages("randomForest")
+library(randomForest)
+rf_model_n100 <- randomForest(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data=train, ntree=100)
+rf_predictions_n100<- predict(rf_model_n100,newdata = test)
+rf_performance_n100<- postResample(pred = rf_predictions_n100,obs = test$SALE_PRC)
+print(rf_performance_n100)
+
+```
+
+**Implementing Random Forest Model (n200)**
+```{r}
+rf_model_n200 <- randomForest(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data=train, ntree=200)
+rf_predictions_n200<- predict(rf_model_n200,newdata = test)
+rf_performance_n200<- postResample(pred = rf_predictions_n200,obs = test$SALE_PRC)
+print(rf_performance_n200)
+
+```
+**Implementing Random Forest Model (n500)**
+```{r}
+rf_model_n500 <- randomForest(SALE_PRC~RAIL_DIST+CNTR_DIST+month_sold, data=train, ntree=500)
+rf_predictions_n500<- predict(rf_model_n500,newdata = test)
+rf_performance_n500<- postResample(pred = rf_predictions_n500,obs = test$SALE_PRC)
+print(rf_performance_n500)
+```
+
+**Drawing a barchart to find best model for the created model**
+```{r}
+Models <- c(2.932007, 2.903009, 3.047220, 2.903009, 3.042950, 2.696247, 2.683682, 2.686284)
+models_names <- c("LM_Model","DT_Model", "SVR_Poly", "SVR_Radial", "SVR_Linear", "RF_n100", "RF_n200", "RF_n500")
+
+barplot(Models,
+        main = "Error matrics RMSE",
+        xlab = "Models",
+        ylab = "RMSE",
+        names.arg = models_names
+)
+```
